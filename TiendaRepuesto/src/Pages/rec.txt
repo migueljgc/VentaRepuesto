@@ -1,0 +1,141 @@
+import React, { useEffect, useState } from 'react';
+import { MenuUser } from '../Component/Menu';
+import DataTable from 'react-data-table-component';
+import axios from 'axios';
+import '../Pages/HomePages.css'
+
+export const HomePages = () => {
+    const [data, setData] = useState([]);
+    const [categoria, setCategoria] = useState([]);
+    const [selectedCategoria, setSelectedCategoria] = useState('')
+    const [searchTerm, setSearchTerm] = useState('')
+
+
+    const fetchData = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/api/Productos/get')
+            setData(response.data);
+            console.log("esta es la data ", data);
+        } catch (error) {
+            console.error('Error en la data: ', error);
+        }
+
+    };
+    const fetchCategoria = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/api/Categoria/get')
+            setCategoria(response.data);
+            console.log("esta es la data ", categoria);
+        } catch (error) {
+            console.error('Error en la data: ', error);
+        }
+
+    };
+    useEffect(() => {
+        document.title = ""
+        fetchData();
+        fetchCategoria();
+    }, []);
+    const handleCategoriaChange = (catId) => {
+        setSelectedCategoria(catId);
+    };
+
+    const filteredData = selectedCategoria
+        ? data.filter(producto => producto.categoria.id === selectedCategoria &&
+            producto.nombreProducto.toLowerCase().includes(searchTerm.toLowerCase()))
+        : data.filter(producto => producto.nombreProducto.toLowerCase().includes(searchTerm.toLowerCase()));
+    const columns = [
+        {
+            name: 'Producto',
+            selector: row => row.nombreProducto
+        },
+        {
+            name: 'Descripcion',
+            selector: row => row.descripcion
+        },
+        {
+            name: 'Marca',
+            selector: row => row.marca
+        },
+        {
+            name: 'Cantidad',
+            selector: row => row.cantidad
+        },
+        {
+            name: 'Precio',
+            selector: row => row.precio
+        },
+        {
+            name: 'Categoria',
+            selector: row => row.categoria.nombre
+        }
+    ]
+
+    return (
+        <div>
+            <MenuUser />
+            <p>HOLA</p>
+            <div className="res">
+                <div className="categorias">
+                    <div className="">
+                        <input
+                            type="text"
+                            placeholder="Buscar producto..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                        <p>Categoria</p>
+                        <div>
+                            <input
+                                type="radio"
+                                id="categoria-todas"
+                                name="categoria"
+                                value=""
+                                checked={selectedCategoria === ''}
+                                onChange={() => handleCategoriaChange('')}
+                            />
+                            <label htmlFor="categoria-todas">Todas</label>
+                        </div>
+
+                        {categoria.map((cat, index) => (
+                            <div key={index}>
+                                <input
+                                    type="radio"
+                                    id={`categoria-${cat.id}`}
+                                    name="categoria"
+                                    value={cat.id}
+                                    onChange={() => handleCategoriaChange(cat.id)}
+                                />
+                                <label htmlFor={`categoria-${cat.id}`}>{cat.nombre}</label>
+                            </div>
+                        ))}
+                    </div>
+
+                </div>
+                <div className="piezas">
+                    {categoria.map((cat, index) => (
+                            <div key={index}>
+                                <input
+                                    type="radio"
+                                    id={`categoria-${cat.id}`}
+                                    name="categoria"
+                                    value={cat.id}
+                                    onChange={() => handleCategoriaChange(cat.id)}
+                                />
+                            </div>
+                        ))}
+                    <div className="">
+                        <DataTable
+                            columns={columns}
+                            data={filteredData}
+                            fixedHeader
+                            pagination
+
+                        />
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    );
+}

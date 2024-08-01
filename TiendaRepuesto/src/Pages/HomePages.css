@@ -1,0 +1,67 @@
+.res {
+    display: grid;
+    grid-auto-columns: 1fr;
+    grid-template-columns: max-content 1.5fr;
+    grid-template-rows: max-content;
+    grid-template-areas:
+        "categoria piezas";
+}
+
+.categoria {
+    grid-area: categoria;
+}
+
+.piezas {
+    grid-area: piezas;
+}
+
+.pieza {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25%;
+    
+
+}
+
+.datos {
+    display: grid;
+    grid-template-columns:  1.4fr 0.6fr;
+    grid-template-rows: 1fr 1fr;
+    grid-auto-columns: 1fr;
+    gap: 0px 2px;
+    grid-auto-flow: row;
+    grid-template-areas:
+        "data compra"
+        "data carrito-compra";
+    border: 1px solid #ccc;
+    padding: 20px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.data {
+    grid-area: data;
+}
+
+.compra {
+    grid-area: compra;
+}
+
+.carrito-compra {
+    grid-area: carrito-compra;
+}
+
+
+#compras {
+    color: black;
+    margin: 4px 2px;
+    width: 200px;
+    height: 50px;
+}
+
+#carrito-compras {
+    color: black;
+    margin: 4px 2px;
+    width: 200px;
+    height: 50px;
+}
